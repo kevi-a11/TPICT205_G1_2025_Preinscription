@@ -1,0 +1,144 @@
+﻿@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+@using GestionNotes.Blazor.Models
+
+<link href="css/InfoMedicale.css" rel="stylesheet" />
+
+<DataAnnotationsValidator />
+
+<div class="grid-container">
+
+    <!-- Pratique du sport -->
+    <div>
+        <label for="pratiqueSport">Pratiquez-vous un sport ?</label>
+        <InputSelect id="pratiqueSport" @bind-Value="medicale.PratiqueSport" class="input-field">
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </InputSelect>
+    </div>
+
+    @if (medicale.PratiqueSport)
+    {
+        <div>
+            <label for="sport">Quel sport pratiquez-vous ?</label>
+            <InputText id="sport" @bind-Value="medicale.Sport" class="input-field" />
+        </div>
+    }
+
+    <!-- Antécédents Médicaux -->
+    <div>
+        <label for="antecedentMedicaux">Antécédents Médicaux</label>
+        <InputSelect id="antecedentMedicaux" @bind-Value="AntecedentMedicaux" class="input-field">
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </InputSelect>
+    </div>
+
+    <!-- Handicap -->
+    <div>
+        <label for="estHandicap">Avez-vous un handicap ?</label>
+        <InputSelect id="estHandicap" @bind-Value="EstHandicap" class="input-field">
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </InputSelect>
+    </div>
+
+    @if (medicale.EstHandicap)
+    {
+        <div>
+            <label for="handicap">Quel type de handicap ?</label>
+            <InputText id="handicap" @bind-Value="medicale.Handicap" class="input-field" />
+        </div>
+    }
+
+    <!-- Traitement médical -->
+    <div>
+        <label for="sousTraitement">Êtes-vous sous traitement ?</label>
+        <InputSelect id="sousTraitement" @bind-Value="SousTraitement" class="input-field">
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </InputSelect>
+    </div>
+
+    @if (medicale.SousTraitement)
+    {
+        <div>
+            <label for="nomMaladie">Nom du traitement</label>
+            <InputText id="nomMaladie" @bind-Value="medicale.NomMaladie" class="input-field" />
+        </div>
+    }
+
+    <!-- Maladies chroniques -->
+    <div>
+        <label for="maladieChronique">Avez-vous une maladie chronique ?</label>
+        <InputSelect id="maladieChronique" @bind-Value="MaladieChronique" class="input-field">
+            <option value="true">Oui</option>
+            <option value="false">Non</option>
+        </InputSelect>
+    </div>
+
+
+    <div>
+
+        @if (medicale.MaladieChronique)
+        {
+            <label for="allergies">Nom de maladie</label>
+            <InputText id="allergies" @bind-Value="medicale.NomMaladieChronique" class="input-field" />
+        }
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO medicale { get; set; } = new();
+
+    private bool PratiqueSport
+    {
+        get => medicale.PratiqueSport;
+        set
+        {
+            medicale.PratiqueSport = value;
+            if (!value) medicale.Sport = string.Empty;
+        }
+    }
+
+    private bool AntecedentMedicaux
+    {
+        get => medicale.AntecedentsMedicaux;
+        set
+        {
+            medicale.AntecedentsMedicaux = value;
+        }
+    }
+
+    private bool EstHandicap
+    {
+        get => medicale.EstHandicap;
+        set
+        {
+            medicale.EstHandicap = value;
+            if (!value) medicale.Handicap = string.Empty;
+        }
+    }
+
+    private bool SousTraitement
+    {
+        get => medicale.SousTraitement;
+        set
+        {
+            medicale.SousTraitement = value;
+            if (!value) medicale.NomMaladie = string.Empty;
+        }
+    }
+
+    private bool MaladieChronique
+    {
+        get => medicale.MaladieChronique;
+        set
+        {
+            medicale.MaladieChronique = value;
+            if (!value) medicale.NomMaladieChronique = string.Empty;
+        }
+    }
+}

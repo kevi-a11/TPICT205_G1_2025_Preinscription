@@ -1,0 +1,98 @@
+﻿@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+@using Microsoft.AspNetCore.Components.Forms
+
+<link href="css/InfoCivile.css" rel="stylesheet" />
+<DataAnnotationsValidator />
+
+<div class="grid-container">
+    <!-- Nationalité -->
+    <div>
+        <label for="nation">Nationalité</label>
+        <InputSelect id="nation" @bind-Value="civil.Nationalite" class="input-field" required>
+            @foreach (var pays in pays.pays)
+            {
+                <option value="@pays.Id">@pays.Nom</option>
+            }
+        </InputSelect>
+    </div>
+
+
+    <!-- Statut Matrimonial -->
+    <div>
+        <label for="situationMat">Statut Matrimonial</label>
+        <InputSelect id="situationMat" @bind-Value="civil.StatutMatrimonial" class="input-field" required>
+            @foreach (var statut in Enum.GetValues<StatutMatrimonial>())
+            {
+                <option value="@statut">@statut.ToString()</option>
+            }
+        </InputSelect>
+    </div>
+
+    <!-- Situation Professionnelle -->
+    <div>
+        <label for="situationPro">Situation Professionnelle</label>
+        <InputSelect id="situationPro" @bind-Value="civil.SituationProfessionnelle" class="input-field" required>
+            @foreach (var sit in Enum.GetValues<SituationPro>())
+            {
+                <option value="@sit">@sit.ToString()</option>
+            }
+        </InputSelect>
+    </div>
+
+    <!-- Numéro de CNI -->
+    <div>
+        <label for="cni">Numéro de CNI</label>
+        <InputText id="cni" @bind-Value="civil.NumeroCNI" required class="input-field" />
+    </div>
+
+
+    <!-- Nom du Père -->
+    <div>
+        <label for="nomPere">Nom du Père</label>
+        <InputText id="nomPere" @bind-Value="civil.NomPere" required class="input-field" />
+    </div>
+
+
+    <!-- Nom de la Mère -->
+    <div>
+        <label for="nomMere">Nom de la Mère</label>
+        <InputText id="nomMere" @bind-Value="civil.NomMere" required class="input-field" />
+    </div>
+
+
+
+
+
+    <!-- Numéro de Téléphone du Père -->
+    <div>
+        <label for="telPere">Numéro de Téléphone du Père</label>
+        <InputText id="telPere" @bind-Value="civil.AdresseTelephoniquePere" required class="input-field" />
+    </div>
+
+    <!-- Numéro de Téléphone de la Mère -->
+    <div>
+        <label for="telMere">Numéro de Téléphone de la Mère</label>
+        <InputText id="telMere" @bind-Value="civil.AdresseTelephoniqueMere" required class="input-field" />
+    </div>
+
+    <!-- Profession du Père -->
+    <div>
+        <label for="professionPere">Profession du Père</label>
+        <InputText id="professionPere" @bind-Value="civil.ProfessionPere" required class="input-field" />
+    </div>
+
+    <!-- Profession de la Mère -->
+    <div>
+        <label for="professionMere">Profession de la Mère</label>
+        <InputText id="professionMere" @bind-Value="civil.ProfessionMere" required class="input-field" />
+    </div>
+
+</div>
+
+
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO civil { get; set; } = new();
+    [Parameter] public DataDynamic pays { get; set; } = new DataDynamic();
+}

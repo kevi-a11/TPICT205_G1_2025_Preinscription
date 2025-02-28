@@ -1,0 +1,60 @@
+﻿@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+
+<link href="css/InfoPaiement.css" rel="stylesheet" />
+
+<div class="ligne-2">
+    <!-- Agence de Paiement -->
+    <div class="form-group">
+        <label for="agence">Agence de Paiement</label>
+        <InputSelect id="agence" @bind-Value="paiement.AgencePaiement" class="input-field" required>
+            <option value="" disabled selected>Sélectionnez une agence</option>
+            @foreach (var agence in data.agences)
+            {
+                <option value="@agence.Id">@agence.Nom</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => paiement.AgencePaiement)" />
+    </div>
+
+    <div>
+        <label for="compte">Numéro de Compte</label>
+        <InputSelect id="compte" @bind-Value="paiement.NumeroComptePaiement" class="input-field" required>
+            <option value="" disabled selected>Sélectionnez un numéro de compte</option>
+            @foreach (var numero in data.numeroComptes.Where(nc => nc.AgencePaiementId == paiement.AgencePaiement))
+            {
+                <option value="@numero.Id">@numero.Numero</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => paiement.NumeroComptePaiement)" />
+    </div>
+
+    <div>
+        <label for="numerotransaction">Numéro de Transaction</label>
+        <InputText id="numerotransaction" @bind-Value="paiement.NumeroRecu" class="input-field" required></InputText>
+        <ValidationMessage For="@(() => paiement.NumeroRecu)" />
+    </div>
+
+    <!-- Montant -->
+    <div class="form-group">
+        <label for="montant">Montant (Fcfa)</label>
+        <InputNumber id="montant" @bind-Value="paiement.MontantPaye" class="input-field" step="10000" min="0" required />
+        <ValidationMessage For="@(() => paiement.MontantPaye)" />
+    </div>
+
+    <!-- Date de Paiement -->
+    <div class="form-group">
+        <label for="datePaiement">Date de Paiement</label>
+        <InputDate id="datePaiement" @bind-Value="paiement.DateImpressionRecu" class="input-field" required />
+    </div>
+</div>
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO paiement { get; set; } = new();
+    [Parameter] public DataDynamic data { get; set; } = new();
+}
+

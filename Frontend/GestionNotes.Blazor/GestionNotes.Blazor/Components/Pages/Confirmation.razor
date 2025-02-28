@@ -1,0 +1,93 @@
+﻿@page "/confirmation"
+@using MudBlazor
+@rendermode InteractiveServer
+@inject ISnackbar Snackbar
+@inject DatabaseContext DbContext
+@inject PreinscriptionService PreinscriptionService
+@inject NavigationManager Navigation
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+@using GestionNotes.Blazor.Services
+@using Microsoft.Extensions.Logging
+
+<link href="css/Confirmation.css" rel="stylesheet" />
+
+<div class="photo-upload-container">
+    <!-- Instructions pour la photo -->
+    <div class="confirm-container">
+        <h2>Informations Personnelles</h2>
+        <ul>
+            <li><span>Nom :</span> <span>@Data.Nom</span></li>
+            <li><span>Prénom :</span> <span>@Data.Prenom</span></li>
+            <li><span>Sexe :</span> <span>@Data.Sexe</span></li>
+            <li><span>Adresse Email :</span> <span>@Data.AdresseEmail</span></li>
+            <li><span>Adresse Téléphonique :</span> <span>@Data.AdresseTelephonique</span></li>
+            <li><span>Adresse Localisation :</span> <span>@Data.AdresseLocalisation</span></li>
+            <li><span>Langue Dominante :</span> <span>@Data.LangueDominante</span></li>
+            <li><span>Lieu de Naissance :</span> <span>@Data.LieuDeNaissance</span></li>
+            <li><span>Date de Naissance :</span> <span>@Data.DateDeNaissance.ToShortDateString()</span></li>
+            <li><span>Nationalité :</span> <span>@DbContext.Pays.FirstOrDefault(p => p.Id == Data.Nationalite)?.Nom</span></li>
+            <li><span>Numéro CNI :</span> <span>@Data.NumeroCNI</span></li>
+            <li><span>Ville :</span> <span>@DbContext.Villes.FirstOrDefault(v => v.Id == Data.Ville)?.Nom</span></li>
+            <li><span>Statut Matrimonial :</span> <span>@Data.StatutMatrimonial</span></li>
+            <li><span>Situation Professionnelle :</span> <span>@Data.SituationProfessionnelle</span></li>
+            <li><span>Région d'Origine :</span> <span>@DbContext.Regions.FirstOrDefault(r => r.Id == Data.RegionOrigine)?.Nom</span></li>
+            <li><span>Nom du Père :</span> <span>@Data.NomPere</span></li>
+            <li><span>Nom de la Mère :</span> <span>@Data.NomMere</span></li>
+            <li><span>Adresse Téléphonique du Père :</span> <span>@Data.AdresseTelephoniquePere</span></li>
+            <li><span>Adresse Téléphonique de la Mère :</span> <span>@Data.AdresseTelephoniqueMere</span></li>
+            <li><span>Profession du Père :</span> <span>@Data.ProfessionPere</span></li>
+            <li><span>Profession de la Mère :</span> <span>@Data.ProfessionMere</span></li>
+            <li><span>Type de Diplôme :</span> <span>@Data.TypeDiplome</span></li>
+            <li><span>Organisme de Délivrance :</span> <span>@Data.OrganismeDelivrance</span></li>
+            <li><span>Série :</span> <span>@Data.Serie</span></li>
+            <li><span>Date de Délivrance :</span> <span>@Data.DateDelivrance.ToShortDateString()</span></li>
+            <li><span>Numéro de Reçu :</span> <span>@Data.NumeroRecu</span></li>
+            <li><span>Année d'Obtention :</span> <span>@Data.AnneeObtention</span></li>
+            <li><span>Moyenne :</span> <span>@Data.Moyenne</span></li>
+            <li><span>Montant Payé :</span> <span>@Data.MontantPaye</span></li>
+            <li><span>Numéro de Compte de Paiement :</span> <span>@DbContext.NumeroCompteAgences.FirstOrDefault(n => n.Id == Data.NumeroComptePaiement)?.Numero</span></li>
+            <li><span>Agence de Paiement :</span> <span>@DbContext.AgencePaiements.FirstOrDefault(a => a.Id == Data.AgencePaiement)?.Nom</span></li>
+            <li><span>Date d'Impression du Reçu :</span> <span>@Data.DateImpressionRecu.ToShortDateString()</span></li>
+            <li><span>Faculté :</span> <span>@DbContext.Facultes.FirstOrDefault(f => f.Id == Data.Faculte)?.Nom</span></li>
+            <li><span>Premier Choix de Filière :</span> <span>@DbContext.Filieres.FirstOrDefault(f => f.Id == Data.ChoixFiliere1)?.Nom</span></li>
+            <li><span>Deuxième Choix de Filière :</span> <span>@DbContext.Filieres.FirstOrDefault(f => f.Id == Data.ChoixFiliere2)?.Nom</span></li>
+            <li><span>Troisième Choix de Filière :</span> <span>@DbContext.Filieres.FirstOrDefault(f => f.Id == Data.ChoixFiliere3)?.Nom</span></li>
+            <li><span>Niveau :</span> <span>@Data.Niveau</span></li>
+        </ul>
+        <button @onclick="Submit">Suivant</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO Data { get; set; } = new();
+    [Inject] private ILogger<Confirmation> Logger { get; set; }
+
+    protected override void OnParametersSet()
+    {
+    }
+
+    private async Task Submit()
+    {
+        Logger.LogInformation("Envoi des données de préinscription au backend.");
+        var id = await PreinscriptionService.EnregistrerPreinscriptionAsync(Data);
+        if (id != null)
+        {
+            Data.Id = id.Value;
+            Snackbar.Add("Préinscription réussie!", Severity.Success);
+            Navigation.NavigateTo($"/etat-preinscription/{Data.Id}");
+        }
+        else
+        {
+            Snackbar.Add("Échec de la préinscription.", Severity.Error);
+        }
+    }
+}
+
+<style>
+    li {
+        display: flex;
+        justify-content: space-between;
+        gap: 300px;
+    }
+</style>

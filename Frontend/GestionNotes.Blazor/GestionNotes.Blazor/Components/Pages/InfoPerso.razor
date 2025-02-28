@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+@inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
+<link href="css/InfoPerso.css" rel="stylesheet" />
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="grid-container">
+        <!-- Nom et Prénom -->
+        <div>
+            <label for="nom">Nom</label>
+            <InputText id="nom" @bind-Value="personnel.Nom" class="input-field" required />
+        </div>
+        <div>
+            <label for="prenom">Prénom</label>
+            <InputText id="prenom" @bind-Value="personnel.Prenom" class="input-field" required />
+        </div>
+
+        <!-- Sexe -->
+        <div>
+            <label for="sexe">Sexe</label>
+            <InputSelect id="sexe" @bind-Value="personnel.Sexe" class="input-field">
+                @foreach (var sexe in Enum.GetValues<Sexe>())
+                {
+                    <option value="@sexe">@sexe.ToString()</option>
+                }
+            </InputSelect>
+        </div>
+
+        <!-- Lieu et Date de Naissance -->
+        <div>
+            <label for="lieuNaissance">Lieu de Naissance</label>
+            <InputText id="lieuNaissance" @bind-Value="personnel.LieuDeNaissance" class="input-field" />
+        </div>
+        <div>
+            <label for="dateNaissance">Date de Naissance</label>
+            <InputDate id="dateNaissance" @bind-Value="personnel.DateDeNaissance" class="input-field" />
+        </div>
+
+        <!-- Langue Dominante -->
+        <div>
+            <label for="langue">Langue Dominante</label>
+            <InputSelect id="langue" @bind-Value="personnel.LangueDominante" class="input-field">
+                @foreach (var lang in Enum.GetValues<Langue>())
+                {
+                    <option value="@lang">@lang.ToString()</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO personnel { get; set; } = new();
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

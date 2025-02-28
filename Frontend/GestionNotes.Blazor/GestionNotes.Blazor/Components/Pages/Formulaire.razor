@@ -1,0 +1,340 @@
+﻿@page "/preinscription"
+@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Services
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@using MudBlazor
+@inject CustomCircuitHandler CircuitHandler
+@inject PreinscriptionService PreinscriptionService
+@rendermode InteractiveServer
+
+<link rel="stylesheet" href="css/preinscription.css" />
+
+<div class="page-container">
+    <Header connexion="0" />
+
+    <main class="main-content">
+        <EditForm Model="Data" OnValidSubmit="HandleValidSubmit" class="form-container">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="stepper-container">
+                <div class="steps">
+                    @for (int i = 0; i < stepTitles.Length; i++)
+                    {
+                        <div class="step @GetStepClass(i)">
+                            <span class="step-title">@stepTitles[i]</span>
+                            <div class="square-step @GetStepClass(i)">
+                                <MudIcon Icon="@stepIcons[i]" style="@($"fill: {colorIcon};")" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Ligne de progression -->
+                <div class="progress">
+                    <div class="progress-bar" style="width: @(currentStepIndex * 100 / (stepTitles.Length - 1))%;"></div>
+                </div>
+            </div>
+
+            <div id="step-container">
+                @if (currentStepIndex == 0)
+                {
+                    <!-- Étape 1 : Informations Personnelles -->
+                    <div style="width:auto; display: @(currentStepIndex == 0 ? "block" : "");">
+                        <InfoPerso personnel="Data" OnValidSubmit="SaveDataAndNextStep" />
+                    </div>
+                }
+                else if (currentStepIndex == 1)
+                {
+                    <!-- Étape 2 : Informations Civiles -->
+                    <div>
+                        <InfoCivile civil="Data" pays="data" />
+                    </div>
+                }
+                else if (currentStepIndex == 2)
+                {
+                    <!-- Étape 3 : Informations Adresse -->
+                    <div style="width:auto; display: @(currentStepIndex == 2 ? "block" : "")">
+                        <InfoAdresse adresse="Data" data="data" />
+                    </div>
+                }
+                else if (currentStepIndex == 3)
+                {
+                    <!-- Étape 4 : Informations Médicales -->
+                    <div class="form-step @(currentStepIndex == 3 ? "active" : "")">
+                        <InfoMedicale medicale="Data" />
+                    </div>
+                }
+                else if (currentStepIndex == 4)
+                {
+                    <!-- Étape 5 : Informations Diplôme -->
+                    <div style="width:auto; display: @(currentStepIndex == 4 ? "block" : "")">
+                        <InfoDiplome diplome="Data" />
+                    </div>
+                }
+                else if (currentStepIndex == 5)
+                {
+                    <!-- Étape 6 : Choix de Filière -->
+                    <div style="width:auto; display: @(currentStepIndex == 5 ? "block" : "")">
+                        <InfoChoixFiliere preinscription="Data" data="data" />
+                    </div>
+                }
+                else if (currentStepIndex == 6)
+                {
+                    <!-- Étape 7 : Paiement -->
+                    <div style="width:auto; display: @(currentStepIndex == 6 ? "block" : "")">
+                        <InfoPaiement paiement="Data" data="data" />
+                    </div>
+                }
+                else if (currentStepIndex == 7)
+                {
+                    <!-- Étape 8 : Ajouter Photo -->
+                    <div style="width:auto; display: @(currentStepIndex == 7 ? "block" : "")">
+                        <AjouterPhoto Data="Data" />
+                    </div>
+                }
+                else if (currentStepIndex == 8)
+                {
+                    <!-- Étape 9 : Confirmation -->
+                    <div style="width:auto; display: @(currentStepIndex == 8 ? "block" : "")">
+                        <Confirmation Data="Data" />
+                    </div>
+                }
+                else if (currentStepIndex == 9)
+                {
+                    <!-- Étape 10 : État de Pré-inscription -->
+                    <div style="width:auto; display: @(currentStepIndex == 9 ? "block" : "")">
+                        <EtatPreinscription data="Data" />
+                    </div>
+                }              
+            </div>
+
+            <!-- Boutons de navigation -->
+            <div class="d-flex justify-space-around mt-4" style="display: flex; justify-content: space-between;">
+                @if (currentStepIndex != 0)
+                {
+                    <button type="button" @onclick="async () => await PrevStep()" class="btn btn-secondary">
+                        Précédent
+                    </button>
+                }
+                else
+                {
+                    <div></div>
+                }
+                @if (currentStepIndex != 9)
+                {
+                    <button type="button" @onclick="async () => await NextStep()" class="btn btn-primary">
+                        Suivant
+                    </button>
+                }
+                @if (currentStepIndex == 9)
+                {
+                    <button type="button" @onclick="async () => await HandleValidSubmit()" class="btn btn-success">
+                        @(isSubmitting ? "Soumission en cours..." : "Soumettre")
+                    </button>
+                }
+            </div>
+        </EditForm>
+    </main>
+
+    <Footer />
+</div>
+
+@code {
+    private int currentStepIndex = 0;
+    private bool isSubmitting = false;
+
+    private string colorIcon = string.Empty;
+
+    private PreinscriptionEtudiantDTO Data = new PreinscriptionEtudiantDTO();
+    private DataDynamic data = new DataDynamic();
+
+    private string[] stepTitles = new string[]
+    {
+        "Personnelle", "Civiles", "Adresses", "Médicales", "Diplôme", "Choix", "Paiement", "Profil", "Confirmation", "État", "Fiche"
+    };
+
+    private string[] stepIcons = new string[]
+    {
+        Icons.Material.Filled.Person, Icons.Material.Filled.Assignment, Icons.Material.Filled.LocationOn,
+        Icons.Material.Filled.MedicalServices, Icons.Material.Filled.School, Icons.Material.Filled.ListAlt,
+        Icons.Material.Filled.Payment, Icons.Material.Filled.CameraAlt, Icons.Material.Filled.CheckCircle,
+        Icons.Material.Filled.Assessment, Icons.Material.Filled.Description
+    };
+
+    // Méthode pour appliquer une classe CSS selon l'état de l'étape
+    private string GetStepClass(int stepIndex)
+    {
+        if (stepIndex < currentStepIndex)
+        {
+            colorIcon = "white";
+            return "step-passed";
+        }
+        else if (stepIndex == currentStepIndex)
+        {
+            colorIcon = "#2575fc";
+            return "step-current";
+        }
+        colorIcon = "gray";
+        return "step-future";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await LoadData();
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during OnAfterRenderAsync: {ex.Message}");
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            data.DonneTest();
+            LocalStorage.RemoveItemAsync("preinscriptionData");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during OnInitialized: {ex.Message}");
+        }
+    }
+
+    private async Task SaveDataAndNextStep()
+    {
+        if (CircuitHandler.IsConnected)
+        {
+            try
+            {
+                await LocalStorage.SetItemAsync("preinscriptionData", Data);
+                await LocalStorage.SetItemAsync("currentStepIndex", currentStepIndex);
+
+                if (currentStepIndex < stepTitles.Length - 1)
+                {
+                    currentStepIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during SaveDataAndNextStep: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task NextStep()
+    {
+        if (CircuitHandler.IsConnected)
+        {
+            try
+            {
+                await SaveData();
+                if (currentStepIndex < stepTitles.Length - 1)
+                {
+                    currentStepIndex++;
+                    StateHasChanged();
+                }
+                await SaveData();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during NextStep: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task PrevStep()
+    {
+        if (CircuitHandler.IsConnected)
+        {
+            try
+            {
+                if (currentStepIndex > 0)
+                {
+                    currentStepIndex--;
+                    await SaveData();
+                    StateHasChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during PrevStep: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task SaveData()
+    {
+        if (CircuitHandler.IsConnected)
+        {
+            try
+            {
+                await LocalStorage.SetItemAsync("preinscriptionData", Data);
+                await LocalStorage.SetItemAsync("currentStepIndex", currentStepIndex);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during SaveData: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task LoadData()
+    {
+        if (CircuitHandler.IsConnected)
+        {
+            try
+            {
+                Data = await LocalStorage.GetItemAsync<PreinscriptionEtudiantDTO>("preinscriptionData") ?? new PreinscriptionEtudiantDTO();
+                currentStepIndex = await LocalStorage.GetItemAsync<int>("currentStepIndex");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during LoadData: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSubmitting = true;
+        if (CircuitHandler.IsConnected)
+        {
+            try
+            {
+                var id = await PreinscriptionService.EnregistrerPreinscriptionAsync(Data);
+                if (id != null)
+                {
+                    Data.Id = id.Value; // Assigner l'ID généré par la base de données
+                    await LocalStorage.RemoveItemAsync("preinscriptionData");
+                    await LocalStorage.RemoveItemAsync("currentStepIndex");
+                    NavigationManager.NavigateTo($"/etat-preinscription/{Data.Id}", true);
+                }
+                else
+                {
+                    // Gérer l'erreur
+                    Console.WriteLine("Error during HandleValidSubmit: Failed to submit data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during HandleValidSubmit: {ex.Message}");
+            }
+            finally
+            {
+                isSubmitting = false;
+            }
+        }
+    }
+}

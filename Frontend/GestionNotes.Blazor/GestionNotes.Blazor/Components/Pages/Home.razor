@@ -1,0 +1,59 @@
+﻿@page "/"
+
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+@using GestionNotes.Blazor.Components.Pages
+@rendermode InteractiveServer
+
+<PageTitle>Pré-Inscription</PageTitle>
+
+<link rel="stylesheet" href="css/Style.css">
+<script src="js/animations.js"></script>
+
+<div class="container">
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo"><img src="téléchargement.png" alt="LOGO"></div>
+        <div class="menu">
+            <button class="lang">🇫🇷 FR</button>
+            <button class="btn-outline">Se connecter</button>
+            <button class="btn-primary" @onclick="NavigateToLogin">Me Pré-inscrire</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <h1 class="title">BIENVENUE SUR LE SITE DE PRE-INSCRIPTION</h1>
+        <p class="description">Description de l'application ici ou à défaut une brève introduction</p>
+        <div class="buttons">
+            <button class="btn-gradient">Se connecter</button>
+            <button class="btn-gradient">En savoir plus</button>
+        </div>
+        <p class="discover">Découvrez-maintenant</p>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Copyright &copy; 2024-2025. Tous les droits sont réservés.
+    </footer>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("console.log", "Blazor a bien exécuté animations.js !");
+        }
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/preinscription");
+    }
+
+    private void NavigateToLearnMore()
+    {
+        NavigationManager.NavigateTo("/a-propos");
+    }
+}

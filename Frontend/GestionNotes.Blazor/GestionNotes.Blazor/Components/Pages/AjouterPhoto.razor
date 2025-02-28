@@ -1,0 +1,135 @@
+﻿@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
+@inject IWebHostEnvironment Env
+@inject IJSRuntime JSRuntime
+@inject ILocalStorageService LocalStorage
+@rendermode InteractiveServer
+@using GestionNotes.Blazor.Models.Dynamic
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+@using MudBlazor
+
+<div class="photo-upload-container">
+    <!-- Instructions pour la photo -->
+    <div class="photo-guidelines">
+        <h2>Conditions pour une bonne photo</h2>
+        <ul>
+            <li><span><MudIcon Icon=@Icons.Material.Sharp.PhotoCamera class="icon" /></span> Format 4x4</li>
+            <li><span><MudIcon Icon=@Icons.Material.Sharp.PersonSearch class="icon" /></span> Visage clair et bien centré</li>
+            <li><span><MudIcon Icon=@Icons.Material.Sharp.LightMode class="icon" /></span> Bonne luminosité, pas d'ombres</li>
+            <li><span><MudIcon Icon=@Icons.Material.Sharp.FlipToBack class="icon" /></span> Fond neutre</li>
+            <li><span><MudIcon Icon=@Icons.Material.Sharp.DeleteForever class="icon" /></span> Risque de rejet si non conforme</li>
+        </ul>
+    </div>
+
+    <!-- Conteneur de l'avatar -->
+    <div class="avatar-container">
+        @if (!string.IsNullOrEmpty(imageUrl))
+        {
+            <div class="avatar-circle success" @onclick="TriggerFileInput">
+                <img id="profil" src="@imageUrl" alt="Photo" class="avatar-image" />
+                <span class="edit-icon"><MudIcon Icon=@Icons.Material.Filled.ModeEdit /></span>
+            </div>
+        }
+        else
+        {
+            <div class="avatar-circle" @onclick="TriggerFileInput">
+                @if (GetSexeEnum(Data.Sexe) == Sexe.Homme)
+                {
+                    <MudIcon Icon=@Icons.Material.Outlined.PersonOutline class="avatar-icon" />
+                }
+                else if (GetSexeEnum(Data.Sexe) == Sexe.Femme)
+                {
+                    <MudIcon Icon=@Icons.Material.Outlined.Person class="avatar-icon" />
+                }
+                else
+                {
+                    <MudIcon Icon=@Icons.Material.Outlined.AddAPhoto class="avatar-icon" />
+                }
+                <span class="add-icon"><MudIcon Icon=@Icons.Material.Filled.AddAPhoto /></span>
+            </div>
+
+        }
+    </div>
+
+    <!-- Input file caché -->
+    <InputFile id="fileInput" class="hidden-file-input" OnChange="OnFileUpload" accept=".jpg,.jpeg,.png" />
+</div>
+
+@code {
+    private IBrowserFile? photo;
+    private string? imageUrl;
+    [Parameter] public PreinscriptionEtudiantDTO Data { get; set; } = new();
+
+    protected override void OnParametersSet()
+    {
+
+    }
+
+    private async Task TriggerFileInput()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('fileInput').click()");
+    }
+
+    private async Task OnFileUpload(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            photo = e.File;
+            if (photo == null || photo.Size > 1048576 || (photo.ContentType != "image/jpeg" && photo.ContentType != "image/png"))
+            {
+                Console.WriteLine("Erreur : Fichier invalide ou trop volumineux (1 Mo max).");
+                return;
+            }
+
+            using var ms = new MemoryStream();
+            await photo.OpenReadStream(maxAllowedSize: 1048576).CopyToAsync(ms);
+            imageUrl = $"data:{photo.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}";
+            await LocalStorage.SetItemAsync("profileImage", imageUrl);
+            StateHasChanged();
+            Console.WriteLine("Photo importée avec succès !");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors de l'importation : {ex.Message}");
+        }
+    }
+
+    private Sexe GetSexeEnum(string sexe)
+    {
+        return Enum.TryParse(sexe, out Sexe result) ? result : Sexe.Autre;
+    }
+}
+
+<script>
+    document.addEventListener('paste', function (event) {
+        var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (var index in items) {
+            var item = items[index];
+            if (item.kind === 'file') {
+                var blob = item.getAsFile();
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var base64Data = event.target.result; // Données Base64 de l'image
+
+                    // Repérer l'image avec ID "profil"
+                    var imgElement = document.getElementById('profil');
+                    if (imgElement) {
+                        imgElement.src = base64Data;
+                    }
+
+                    // Appeler la méthode Blazor pour mettre à jour les données de l'image
+                    DotNet.invokeMethodAsync('VotreNamespace', 'HandlePastedImage', base64Data.split(',')[1], blob.type)
+                        .then(() => {
+                            console.log('Image collée et mise à jour !');
+                        })
+                        .catch((error) => {
+                            console.error('Erreur lors du traitement de l\'image collée :', error);
+                        });
+                };
+                reader.readAsDataURL(blob);
+            }
+        }
+    });
+</script>

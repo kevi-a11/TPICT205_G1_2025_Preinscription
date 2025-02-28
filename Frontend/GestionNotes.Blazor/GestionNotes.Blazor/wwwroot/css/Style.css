@@ -1,0 +1,239 @@
+﻿/* Global Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom, #210046, #3a0080);
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container Setup */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    flex-wrap: wrap; /* Permet aux éléments de se réorganiser sur les petits écrans */
+}
+
+.logo img {
+    width: 100px;
+    margin-left: -40px;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: -100px;
+}
+
+.btn-primary, .btn-outline {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: white;
+    color: black;
+    font-weight: bold;
+}
+
+.btn-outline {
+    background: #3a0080;
+    border: 1px solid white;
+    color: white;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-gradient {
+    background: linear-gradient(to right, #3a00ff, #c200ff);
+    padding: 10px 25px;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+    .btn-gradient:hover {
+        opacity: 0.8;
+    }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    /* Adapte le header à une taille d'écran plus petite */
+    header {
+        padding: 10px;
+        justify-content: space-between;
+    }
+
+    .logo img {
+        width: 80px; /* Diminue la taille du logo */
+        margin-left: 0;
+    }
+
+    .menu {
+        margin-right: 0;
+        margin-top: 10px;
+    }
+
+    .buttons {
+        flex-direction: column; /* Empile les boutons sur les petits écrans */
+    }
+}
+
+@media (max-width: 992px) {
+    /* Ajuste les éléments du menu */
+    .menu {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-primary, .btn-outline {
+        width: 100%; /* Remplir toute la largeur sur petits écrans */
+    }
+
+    .btn-gradient {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Adaptation pour petits écrans */
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .menu {
+        margin-left: 0; /* Réinitialiser les marges */
+    }
+
+    .logo img {
+        width: 60px; /* Réduit encore la taille du logo */
+    }
+
+    .buttons {
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn-gradient {
+        width: 90%; /* Largeur complète pour les boutons */
+        margin-top: 10px;
+    }
+
+    .title {
+        font-size: 1.5rem; /* Réduit la taille du titre */
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Pour très petits écrans comme les smartphones */
+    .logo img {
+        width: 50px;
+    }
+
+    .title {
+        font-size: 1.2rem;
+    }
+
+    .description {
+        font-size: 0.9rem;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+    .btn-gradient {
+        width: 80%; /* Rendre les boutons plus larges sur les petits écrans */
+        margin-top: 10px;
+    }
+}
+
+/* Animations */
+.circle{
+    position: absolute;
+    opacity: 0.7;
+    animation: floating 5s linear infinite;
+}
+
+.triangle {
+    position: absolute;
+    opacity: 0.7;
+    animation: floating 5s linear infinite;
+}
+
+@keyframes floating {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+footer {
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
+
+/* Styles from MainLayout.razor */
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    text-align: center;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}

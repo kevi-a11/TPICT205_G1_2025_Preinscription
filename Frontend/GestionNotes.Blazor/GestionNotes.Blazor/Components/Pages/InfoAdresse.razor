@@ -1,0 +1,75 @@
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Dynamic
+@rendermode InteractiveServer
+
+<link href="css/InfoAdresse.css" rel="stylesheet" />
+
+    <div class="grid-container">
+        <!-- Région -->
+        <div>
+            <label for="region">Région d'origine</label>
+            <select id="region" class="input-field" @bind="adresse.RegionOrigine" >
+                <option value="">Sélectionnez une région</option>
+                @foreach (var region in regionFiltres)
+                {
+                    <option value="@region.Id">@region.Nom</option>
+                }
+            </select>
+        </div>
+
+@if(!string.IsNullOrEmpty(adresse.RegionOrigine)){
+        <div>
+            <label for="ville">Ville</label>
+            <select id="ville" class="input-field" @bind="adresse.Ville">
+                <option value="">Sélectionnez une ville</option>
+                @foreach (var ville in data.villes.Where(v => v.RegionId == adresse.RegionOrigine).ToList())
+                {
+                    <option value="@ville.Id">@ville.Nom</option>
+                }
+            </select>
+        </div>
+}
+     <!-- Autres champs -->
+        <div>
+            <label for="localisation">Localisation</label>
+            <InputText id="localisation" @bind-Value="adresse.AdresseLocalisation" class="input-field" />
+        </div>
+
+        <div>
+            <label for="telephone">Téléphone</label>
+            <InputText id="telephone" @bind-Value="adresse.AdresseTelephonique" class="input-field" />
+        </div>
+
+        <div >
+            <label for="email">Adresse Email</label>
+            <InputText id="email" @bind-Value="adresse.AdresseEmail" class="input-field" />
+        </div>
+    </div>
+
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO adresse { get; set; } = new();
+    [Parameter] public DataDynamic data { get; set; } = new();
+    
+    private List<Region> regionFiltres = new List<Region>();
+    private List<Ville> villesFiltres = new List<Ville>();
+
+
+    protected override void OnParametersSet()
+    {
+ 
+
+        if (adresse.Nationalite != null)
+        {
+            regionFiltres = data.regions.Where(r => r.PaysId == adresse.Nationalite).ToList();
+
+        }
+        else
+        {
+
+            regionFiltres.Clear();
+            villesFiltres.Clear();
+        }
+    }
+
+}

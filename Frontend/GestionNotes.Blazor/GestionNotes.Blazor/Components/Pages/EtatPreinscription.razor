@@ -1,0 +1,54 @@
+﻿@page "/etat-preinscription/{id:guid}"
+@using MudBlazor
+@inject NavigationManager Navigation
+@inject StateService StateService
+@using GestionNotes.Blazor.Services
+
+<PageTitle>État de Préinscription</PageTitle>
+
+<link href="css/EtatPreinscription.css" rel="stylesheet" />
+
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="confirmation-circle @circleClass">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="60px" height="60px">
+                <path d="@iconPath" />
+            </svg>
+        </div>
+        <p>@message</p>
+        <div class="button-group">
+            @if (isSuccess)
+            {
+                <a class="confirmation-button" href="/fiche/@Id">Consulter votre fiche</a>
+            }
+            else
+            {
+                <a class="confirmation-button" href="/home">Réessayer</a>
+            }
+            <a class="confirmation-button" href="/">Revenir à l'écran d'accueil</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private string circleClass = "confirmation-circle-failure";
+    private string iconPath = "M18.3 5.7L12 12l-6.3-6.3-1.4 1.4L10.6 12l-6.3 6.3 1.4 1.4L12 13.4l6.3 6.3 1.4-1.4L13.4 12l6.3-6.3z";
+    private string message = "Cette tâche n'a pas pu être effectuée! Nous sommes désolés.";
+    private bool isSuccess = false;
+
+    protected override void OnInitialized()
+    {
+        // Simuler la réponse du backend
+        isSuccess = true; // Remplacez par la logique réelle pour déterminer le succès ou l'échec
+
+        if (isSuccess)
+        {
+            circleClass = "confirmation-circle-success";
+            iconPath = "M9 16.2l-3.5-3.5 1.4-1.4L9 13.4l7.1-7.1 1.4 1.4L9 16.2z";
+            message = "Préinscription réussie!";
+        }
+    }
+}

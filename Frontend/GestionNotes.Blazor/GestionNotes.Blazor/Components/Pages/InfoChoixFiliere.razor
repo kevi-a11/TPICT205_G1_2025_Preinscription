@@ -1,0 +1,133 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JSRuntime
+@inject IHttpClientFactory HttpClientFactory
+@rendermode InteractiveServer
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+@using GestionNotes.Blazor.Models.Dynamic
+
+<link href="css/InfoChoixFiliere.css" rel="stylesheet" />
+
+<DataAnnotationsValidator />
+<ValidationSummary />
+
+<div class="grid-container">
+    @if (!string.IsNullOrEmpty(preinscription.Faculte))
+    {
+        // Mise à jour des filières filtrées une seule fois
+        FilteredFilieres = data.filieres
+        .Where(f => data.departements.Any(d => d.Id == f.DepartementId && d.FaculteId == preinscription.Faculte))
+        .ToList();
+
+        @if (FilteredFilieres.Any())
+        {
+            <div class="form-group">
+                <label for="choix1">Premier Choix de Filière</label>
+                <select id="choix1" class="input-field" @bind="preinscription.ChoixFiliere1">
+                    <option value="" selected disabled>Sélectionnez une filière</option>
+                    @foreach (var filiere in FilteredFilieres.Where(f => f.Id != preinscription.ChoixFiliere2 && f.Id != preinscription.ChoixFiliere3))
+                    {
+                        <option value="@filiere.Id">@filiere.Nom</option>
+                    }
+                </select>
+                <ValidationMessage For="@(() => preinscription.ChoixFiliere1)" />
+            </div>
+
+            <div>
+                <label for="choix2">Deuxième Choix de Filière</label>
+                <select id="choix2" class="input-field" @bind="preinscription.ChoixFiliere2">
+                    <option value="" selected disabled>Sélectionnez une filière</option>
+                    @foreach (var filiere in FilteredFilieres.Where(f => f.Id != preinscription.ChoixFiliere1 && f.Id != preinscription.ChoixFiliere3))
+                    {
+                        <option value="@filiere.Id">@filiere.Nom</option>
+                    }
+                </select>
+                <ValidationMessage For="@(() => preinscription.ChoixFiliere2)" />
+            </div>
+
+            <div>
+                <label for="choix3">Troisième Choix de Filière</label>
+                <select id="choix3" class="input-field" @bind="preinscription.ChoixFiliere3">
+                    <option value="" selected disabled>Sélectionnez une filière</option>
+                    @foreach (var filiere in FilteredFilieres.Where(f => f.Id != preinscription.ChoixFiliere1 && f.Id != preinscription.ChoixFiliere2))
+                    {
+                        <option value="@filiere.Id">@filiere.Nom</option>
+                    }
+                </select>
+                <ValidationMessage For="@(() => preinscription.ChoixFiliere3)" />
+            </div>
+        }
+    }
+
+    <div>
+        <label for="faculte">Faculté</label>
+        <select id="faculte" class="input-field" value="@preinscription.Faculte" @onchange="OnFaculteChanged">
+            <option value="" disabled>Selectionnez votre faculte</option>
+            @foreach (var faculte in data.facultes)
+            {
+                <option value="@faculte.Id">@faculte.Nom</option>
+            }
+        </select>
+        <ValidationMessage For="@(() => preinscription.Faculte)" />
+    </div>
+
+    <div>
+        <label for="niveau">Niveau</label>
+        <select id="niveau" class="input-field" @bind="preinscription.Niveau">
+            <option value="" disabled>Sélectionnez un niveau</option>
+            @foreach (var n in Enum.GetValues(typeof(Niveau)))
+            {
+                <option value="@n.ToString()">@n.ToString()</option>
+            }
+        </select>
+        <ValidationMessage For="@(() => preinscription.Niveau)" />
+    </div>
+    <div>
+
+        @if (!string.IsNullOrEmpty(preinscription.Faculte))
+        {
+
+            <button type="button" @onclick="ResetSelections" class="input-field btn">Réinitialiser mes Choix</button>
+
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO preinscription { get; set; } = new();
+    [Parameter] public DataDynamic data { get; set; } = new();
+
+    private List<Filiere> FilteredFilieres { get; set; } = new();
+    private string WithBouton { get; set; } = string.Empty;
+
+    private void OnFaculteChanged(ChangeEventArgs e)
+    {
+        preinscription.Faculte = e.Value?.ToString() ?? "";
+        preinscription.Niveau = Niveau.L1.ToString();
+        preinscription.ChoixFiliere1 = preinscription.ChoixFiliere2 = preinscription.ChoixFiliere3 = "";
+        FilteredFilieres.Clear();
+        // Mise à jour des filières filtrées une seule fois
+        FilteredFilieres = data.filieres
+            .Where(f => data.departements.Any(d => d.Id == f.DepartementId && d.FaculteId == preinscription.Faculte))
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void ResetSelections()
+    {
+        preinscription.Niveau = Niveau.L1.ToString();
+        preinscription.ChoixFiliere1 = preinscription.ChoixFiliere2 = preinscription.ChoixFiliere3 = "";
+        FilteredFilieres.Clear();
+        WithBouton = "grid-container";
+        StateHasChanged();
+    }
+
+    private bool IsFiliereAlreadySelected(string filiereId)
+    {
+        return filiereId == preinscription.ChoixFiliere1
+            || filiereId == preinscription.ChoixFiliere2
+            || filiereId == preinscription.ChoixFiliere3;
+    }
+}

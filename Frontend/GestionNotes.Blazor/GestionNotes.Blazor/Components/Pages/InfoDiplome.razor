@@ -1,0 +1,70 @@
+﻿@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Models.Enums
+
+<link href="css/InfoDiplome.css" rel="stylesheet" />
+
+<DataAnnotationsValidator />
+
+<div class="grid-container">
+
+    <div>
+        <label for="typeDiplome">Type de Diplôme</label>
+        <InputSelect TValue="string" id="typeDiplome" @bind-Value="diplome.TypeDiplome" class="input-field">
+            <option value="">Sélectionnez</option>
+            @foreach (var type in Enum.GetValues<TypeDiplome>())
+            {
+                <option value="@type">@type.ToString()</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => diplome.TypeDiplome)" />
+    </div>
+
+    <div>
+        <label for="serie">Série</label>
+        <InputSelect TValue="string" id="serie" @bind-Value="diplome.Serie" class="input-field">
+            <option value="" disabled>Sélectionnez</option>
+            @foreach (var s in Enum.GetValues<Serie>())
+            {
+                <option value="@s">@s.ToString()</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => diplome.Serie)" />
+    </div>
+
+    <div>
+        <label for="anneeObtention">Année d'Obtention</label>
+        <InputNumber TValue="int" id="anneeObtention" @bind-Value="diplome.AnneeObtention" Min="1900" Max="2025" step="1" class="input-field" />
+        <ValidationMessage For="@(() => diplome.AnneeObtention)" />
+    </div>
+
+    <div>
+        <label for="organisme">Organisme de Délivrance</label>
+        <InputSelect TValue="string" id="organisme" @bind-Value="diplome.OrganismeDelivrance" class="input-field">
+            <option value="">Sélectionnez</option>
+            @foreach (var org in Enum.GetValues<OrganismeDelivrance>())
+            {
+                <option value="@org">@org.ToString()</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => diplome.OrganismeDelivrance)" />
+    </div>
+
+    <div>
+        <label for="dateDelivrance">Date de Délivrance</label>
+        <InputDate TValue="DateTime" id="dateDelivrance" @bind-Value="diplome.DateDelivrance" class="input-field" />
+        <ValidationMessage For="@(() => diplome.DateDelivrance)" />
+    </div>
+
+    <div>
+        <label for="moyenne">Moyenne</label>
+        <InputNumber TValue="decimal" id="moyenne" @bind-Value="diplome.Moyenne" Min="0" Max="20" Step="0.01" class="input-field" />
+        <ValidationMessage For="@(() => diplome.Moyenne)" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public PreinscriptionEtudiantDTO diplome { get; set; } = new();
+}
