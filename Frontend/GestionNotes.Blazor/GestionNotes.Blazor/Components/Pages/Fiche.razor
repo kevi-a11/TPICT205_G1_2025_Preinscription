@@ -1,13 +1,17 @@
 ﻿@page "/fiche/{id:guid}"
-@inject PdfService PdfService
-@inject NavigationManager Navigation
-@using GestionNotes.Blazor.Services
 @inject IJSRuntime JSRuntime
+@inject PdfService PdfService
+@using GestionNotes.Blazor.Services
 
 <PageTitle>Fiche de Préinscription</PageTitle>
 
 <div>
+    <h3>Fiche de Préinscription</h3>
+
+    <!-- Afficher le PDF dans un iframe -->
     <iframe src="@pdfUrl" width="100%" height="600px"></iframe>
+
+    <!-- Bouton pour télécharger le PDF -->
     <button @onclick="DownloadPdf">Télécharger le PDF</button>
 </div>
 
@@ -19,14 +23,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var pdfBytes = await PdfService.GetPreinscriptionPdfAsync(Id);
-        var base64Pdf = Convert.ToBase64String(pdfBytes);
-        pdfUrl = $"data:application/pdf;base64,{base64Pdf}";
+        // 📌 Afficher le PDF dans l'iframe en base64
+        var pdfBase64 = await PdfService.GetPreinscriptionPdfBase64Async(Id);
+        pdfUrl = $"data:application/pdf;base64,{pdfBase64}";
     }
 
     private async Task DownloadPdf()
     {
-        var pdfDownloadUrl = $"/api/CreatePreinscription/{Id}/pdf";
-        await JSRuntime.InvokeVoidAsync("downloadPdf", pdfDownloadUrl);
+        // 📌 URL API pour télécharger le PDF
+        var downloadUrl = $"https://localhost:7294/api/CreatePreinscription/{Id}/pdf";
+
+        // 📌 Ouvrir le PDF dans un nouvel onglet pour permettre à l'utilisateur de le visualiser
+        await JSRuntime.InvokeVoidAsync("window.open", pdfUrl, "_blank");
+
+        // 📌 Télécharger le PDF via l'API
+        await JSRuntime.InvokeVoidAsync("window.location.href", downloadUrl);
     }
 }

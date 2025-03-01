@@ -1,5 +1,4 @@
 ﻿@page "/"
-
 @inject IJSRuntime JS
 @inject NavigationManager NavigationManager
 @using GestionNotes.Blazor.Components.Pages
@@ -16,7 +15,8 @@
         <div class="logo"><img src="téléchargement.png" alt="LOGO"></div>
         <div class="menu">
             <button class="lang">🇫🇷 FR</button>
-            <button class="btn-outline">Se connecter</button>
+            <!-- Bouton "Modifier" redirige vers la page du code-barre -->
+            <button class="btn-outline" @onclick="NavigateToBarcodePage">Modifier</button>
             <button class="btn-primary" @onclick="NavigateToLogin">Me Pré-inscrire</button>
         </div>
     </header>
@@ -55,5 +55,11 @@
     private void NavigateToLearnMore()
     {
         NavigationManager.NavigateTo("/a-propos");
+    }
+
+    // Méthode pour la redirection vers la page de code-barre
+    private void NavigateToBarcodePage()
+    {
+        NavigationManager.NavigateTo("/code-barre"); // Redirige vers la page '/code-barre'
     }
 }

@@ -22,6 +22,8 @@ builder.Services.AddScoped<CircuitHandler>(sp => sp.GetRequiredService<CustomCir
 builder.Services.AddScoped<PreinscriptionService>();
 builder.Services.AddScoped<PdfService>();
 builder.Services.AddSingleton<StateService>();
+builder.Services.AddScoped<BarcodeService>();
+
 
 // Ajouter le service HttpClient avec une adresse de base
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7294/") });

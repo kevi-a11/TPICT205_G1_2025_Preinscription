@@ -1,0 +1,309 @@
+﻿/* 🎨 Définition des couleurs avec :root */
+:root {
+    --primary-color: #6a11cb;
+    --secondary-color: #2575fc;
+    --background-light: #f4f4f4;
+    --background-dark: #1a1a2e;
+    --text-light: #ffffff;
+    --text-dark: #0f3460;
+    --form-bg-light: rgba(255, 255, 255, 0.9);
+    --form-bg-dark: rgba(0, 0, 0, 0.7);
+    --input-bg-light: rgba(255, 255, 255, 0.7);
+    --input-bg-dark: rgba(50, 50, 50, 0.8);
+    --success: #6a11cb;
+    --current: rgb(206, 206, 206);
+    --current-title: #2575fc;
+}
+
+/* 🎯 Styles généraux */
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: linear-gradient(to bottom, rgb(54, 21, 89), #3a0080);
+    color: var(--text-light);
+    margin: 0;
+    padding: 0;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* 🎯 Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: linear-gradient(to right, #062f76, #210046);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    header .logo img {
+        height: 50px;
+    }
+
+    header .menu {
+        display: flex;
+        gap: 15px;
+    }
+
+/* 🎯 Conteneur de la page */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 🎯 Contenu principal */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(to bottom, #210046, #3a0080);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 🎯 Contenu centré */
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    background: var(--form-bg-light);
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.description {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+    .btn-outline:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background: var(--secondary-color);
+    }
+
+/* 🎯 Formulaires */
+.form-container {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    background: var(--form-bg-light);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--text-dark);
+    background: var(--input-bg-light);
+    color: var(--text-dark);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+    input:focus,
+    select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* 🎯 Footer */
+footer {
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    margin-top: 40px;
+}
+
+    footer p {
+        margin: 0;
+    }
+
+/* 🎯 Boutons supplémentaires */
+button {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+    button:hover {
+        transform: scale(1.1) rotate(-1deg);
+        background: linear-gradient(45deg, #ff758c, #ff7eb3);
+    }
+
+.glow {
+    text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+/* 🎯 Téléchargement de photo */
+.hidden-file-input {
+    display: none;
+}
+
+.photo-upload-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px;
+}
+
+.avatar-container {
+    position: relative;
+    text-align: center;
+}
+
+.avatar-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 3px dashed gray;
+}
+
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+.add-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 🎯 Stepper (Barre de progression) */
+.stepper-container {
+    width: 100%;
+    padding: 30px 0;
+    position: relative;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+.step {
+    text-align: center;
+    position: relative;
+    flex: 1;
+}
+
+.step-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+}
+
+.square-step {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ddd;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.step-passed .square-step {
+    background: var(--primary-color);
+    border: none;
+}
+
+.step-current .square-step {
+    background: white;
+    border: 3px solid var(--secondary-color);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 5px;
+    background: var(--primary-color);
+    border-radius: 5px;
+}

@@ -1,0 +1,70 @@
+﻿@page "/code-barre"
+@inject NavigationManager NavigationManager
+@inject BarcodeService BarcodeService
+@using GestionNotes.Blazor.Models
+@using GestionNotes.Blazor.Services
+
+<PageTitle>Entrer le Code-Barre</PageTitle>
+
+<link href="css/Modifier.css" rel="stylesheet" />
+
+<div class="container">
+    <header>
+        <div class="logo"><img src="téléchargement.png" alt="LOGO"></div>
+    </header>
+
+    <main class="content">
+        <h1>Entrer votre Code-Barre</h1>
+        <p>Veuillez entrer votre code-barre ci-dessous :</p>
+
+        <!-- Création d'un EditContext -->
+        <EditForm EditContext="@editContext" OnValidSubmit="SubmitBarcode">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div>
+                <label for="barcode">Code-Barre :</label>
+                <InputText id="barcode" class="input-field" @bind-Value="barcodeModel.CodeBarre" />
+            </div>
+
+            <button class="btn-primary" type="submit">Soumettre</button>
+        </EditForm>
+    </main>
+
+    <footer class="footer">
+        Copyright &copy; 2024-2025. Tous les droits sont réservés.
+    </footer>
+</div>
+
+@code {
+    private BarcodeDTO barcodeModel = new BarcodeDTO();
+
+    // Création d'un EditContext pour le formulaire
+    private EditContext editContext;
+
+    // Initialiser l'EditContext
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(barcodeModel);
+    }
+
+    private async Task SubmitBarcode()
+    {
+        if (string.IsNullOrEmpty(barcodeModel.CodeBarre))
+        {
+            Console.WriteLine("Code-barre est vide.");
+            return;
+        }
+
+        var studentData = await BarcodeService.GetStudentByBarcodeAsync(barcodeModel.CodeBarre);
+
+        if (studentData != null)
+        {
+            NavigationManager.NavigateTo($"/modifier/{studentData.Id}");
+        }
+        else
+        {
+            Console.WriteLine("Code-barre invalide");
+        }
+    }
+}

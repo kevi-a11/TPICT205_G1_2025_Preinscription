@@ -110,7 +110,7 @@
                     <div style="width:auto; display: @(currentStepIndex == 9 ? "block" : "")">
                         <EtatPreinscription data="Data" />
                     </div>
-                }              
+                }
             </div>
 
             <!-- Boutons de navigation -->
@@ -166,7 +166,6 @@
         Icons.Material.Filled.Assessment, Icons.Material.Filled.Description
     };
 
-    // Méthode pour appliquer une classe CSS selon l'état de l'étape
     private string GetStepClass(int stepIndex)
     {
         if (stepIndex < currentStepIndex)
